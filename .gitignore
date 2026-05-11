@@ -7,3 +7,4 @@ train_images/
 sample_submission.csv
 test.csv
 train.csv
+testing_sample.py
