@@ -2,9 +2,10 @@ import torch
 from PIL import Image
 import os
 import pandas as pd
-import numpy as np
 from torch.utils.data import Dataset, DataLoader
 from torchvision import transforms
+import torch.nn as nn
+import timm
 
 images_path = r"train_images/"
 
@@ -41,15 +42,42 @@ class APTOSData(Dataset):
         image = os.path.join(self.img_path, img_id)
         pil_image = Image.open(image)
         
-        img_arr = np.array(pil_image)
-        img_tensor = torch.Tensor(img_arr)
+        transformed_img = self.transform(pil_image)
         
-        return img_tensor, label        
+        return transformed_img, label        
     
     
 dataset = APTOSData(inputs=images_path, target="train.csv", transforms=transformed)
 
 print(dataset[0])
 
-loader = DataLoader(dataset, batch_size=32, shuffle=True)
+train_loader = DataLoader(dataset, batch_size=32, shuffle=True)
 
+# & training pipeline requirements
+
+model = timm.create_model('efficientnet_b0', pretrained=True, num_classes=5)
+
+optimizer = torch.optim.Adam(model.parameters(), lr=1e-4)
+criterion = nn.CrossEntropyLoss()
+
+# & training pipeline loop
+
+
+print("training loop start...")
+for epoch in range(1):
+    model.train()  # tells model it's in training mode
+    
+    for batch_idx, (images, labels) in enumerate(train_loader):
+        print(f"Epoch {epoch} - Starting batch {batch_idx + 1}/{len(train_loader)}...")
+        
+        optimizer.zero_grad()      # clear gradients from last step
+        
+        outputs = model(images)    # forward pass: (32, 5) logits
+        loss = criterion(outputs, labels)  # scalar loss
+        
+        loss.backward()            # compute gradients
+        optimizer.step()           # update weights
+        
+        print(f"Epoch {epoch} - Batch {batch_idx + 1}/{len(train_loader)} done. Loss: {loss.item():.4f}")
+    
+    print(f"Epoch {epoch} done")
