@@ -1,0 +1,9 @@
+.venv/
+__pycache__/
+*.pyc
+.vscode/
+test_images/
+train_images/
+sample_submission.csv
+test.csv
+train.csv
