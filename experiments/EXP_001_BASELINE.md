@@ -3,8 +3,6 @@
 ## Hypothesis
 - This would either overfit and numbers would be inacurate
 
-## Goal
-Establish baseline behavior using standard cross entropy.
 
 ## Setup
 - Loss: Cross Entropy

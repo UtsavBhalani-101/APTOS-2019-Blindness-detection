@@ -4,8 +4,6 @@
 -  the data is ordinal + imbalance, try focal loss which forces model to learn hard and confusing samples instead of easy ones
 - this should atleast now decrease the results 
 
-## Goal
-- test this same 
 
 ## Setup
 - Loss: focal loss (gamma: 1.0)
@@ -26,6 +24,9 @@
 - the resutls here are not clearly seperable, the data contains label noise and even experts might diagree on severity levels between adjacent classes
 
 ## Conclusion
+- focal loss is not suited for this dataset — the hard samples it prioritizes are ambiguous/noisy rather than informative
+- the adjacent class confusion is still the core issue, and it's a data problem (not enough discriminative samples) not a loss function problem
+- try augmentation next to give the model more varied views of minority classes before changing loss strategy further
 
 
 > NOTE: before this I tried focal loss with weights defined which is essentially double impact and that was not recorded but the result didn't had any significant changes and it's also not correct to double count 

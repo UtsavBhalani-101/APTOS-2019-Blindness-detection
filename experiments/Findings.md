@@ -1,0 +1,54 @@
+
+
+### 1. why did qwk stayed robust and loss so low ?
+- the data we are dealing with is ordinal + imbalance
+- Ordinal:
+- diseases have natural progression
+- CNN is made for detecting temporal structure and relationships
+- So because of that model was able to capture the order of classes fairly well
+- It formed overlapping clusters and the mistakes were mostly adjacent classes 
+
+- Imbalance:
+- This is related to not being sample enough
+- so use frequency based weights to fix this
+- it didn't changed the numbers a lot but the confusion matrix is much better and accurate 
+
+### 2. why focal loss failed ?
+- it forces the model to focus on hard samples rather then easy ones
+- this is not inheriently in bad direction but the hard samples here means noisy, blurry, contradictory images with label noise
+- it's not necessary that focusing on the hard samples will improve the performance and learning. These hard samples might not be informative at all
+- so the numbers stayed similar
+- but when added augmentation to this, then focal loss ....
+
+### 3. why added augmentation ?
+- the confusion matrix showed a consistent behavior of error throughout the experiments - the error were mostly in _**adjacent classes**_
+- for the adjacent classes:
+- it shows that the model is getting confused and can't distinguish between adjacent classes
+- it's happening because the model has not seen enough independent samples of minority classes, hence defaulting to class 2 
+- augmentation forces the model to not  learn more deep, structural features that distinguishes the classes 
+- it resulted in improved QWK score as shown in 7th exp and better discriminative info to distinguish classes
+
+
+### 4. why add MC dropout ?
+- after augmentation, the confusion matrix had another problem, the errors were _**bi directional on middle classes**_
+- why does that matter ?
+- A model with a stable decision boundary outputs something like [0.01, 0.02, 0.94, 0.02, 0.01]. Confident, narrow peak.
+- A model that's genuinely uncertain on a class 2 image outputs something like [0.05, 0.28, 0.35, 0.22, 0.10]. Spread across multiple classes, no clear peak.
+- The argmax of both is class 2. the confusion matrix treats them identically. But these are completely different situations.
+- this is what's happening, we can't distinguish that either the model is 94% confident or 51%, both resulting in same output
+- and also the problem domain is where confident wrong predictions are worse then uncertain correct ones
+- this is where MC dropout is used
+- it surfaces the uncertainty for the predictions made 
+- So MC Dropout is not just useful because wrong predictions are costly. It's useful because your confusion matrix is showing you that a specific region of your prediction space, classes 1, 2, 3 has genuinely unstable decision boundaries. MC Dropout quantifies that instability per prediction.
+- Bidirectional errors → model has unstable decision boundary for middle classes → some predictions in that region are genuinely uncertain → MC Dropout surfaces which specific predictions are uncertain
+- Reason 1 — Regularization during training. This was the accidental benefit you discovered. Dropout forced redundant feature learning, reduced co-adaptation, val loss dropped from 1.6 to 0.8. This had nothing to do with context or uncertainty — it just made the model better.
+- Reason 2 — Surfacing fragile confidence. This is the context-driven reason. Entropy and margin read a single forward pass. They miss the case where a prediction looks confident but flips under perturbation. MC std catches that specific failure mode. In a clinical context a confident-but-fragile prediction is dangerous so you need a signal that detects it.
+
+
+### 5. Why used different proxies ?
+- the current proxies like train loss, val loss, QWK score and confusion matrix hides uncertainity in the model predictions
+- it's just argmax of the result and there's no way to tell if the model is confidently wrong or just barely wrong 
+- we use entropy and margin to surface that
+
+
+### 6. 

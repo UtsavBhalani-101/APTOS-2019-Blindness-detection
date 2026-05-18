@@ -1,7 +1,5 @@
 # EXP_002_VALIDATION
 
-## Goal
-Test the model on validation dataset and QWK (quadratic weighted kappa) score
 
 ## Hypothesis
 - These might be better proxies compared to training loss and reval actual problem

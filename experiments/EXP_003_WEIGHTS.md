@@ -4,8 +4,6 @@
 - just give weights in the order of severity of that class error problem [1,2,3,4,5] 
 - it's ordered 
 
-## Goal
-Test weighted 
 
 ## Setup
 - Loss: weightd Cross Entropy

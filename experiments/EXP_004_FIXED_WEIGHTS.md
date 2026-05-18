@@ -4,8 +4,7 @@
 - replacing the weights with their value counts should improve the numbers 
 - and help give equal priority to all classes
 
-## Goal
-Test new weights 
+
 
 ## Setup
 - Loss: weightd Cross Entropy
