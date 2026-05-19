@@ -18,7 +18,7 @@
 - this is not inheriently in bad direction but the hard samples here means noisy, blurry, contradictory images with label noise
 - it's not necessary that focusing on the hard samples will improve the performance and learning. These hard samples might not be informative at all
 - so the numbers stayed similar
-- but when added augmentation to this, then focal loss ....
+- but when added augmentation to this, focal loss made things significantly worse (QWK dropped to 0.76, the lowest in the entire series). Augmentation creates more varied and harder samples, and focal loss doubles down on exactly those hard samples — which in this dataset are noisy, clinically ambiguous, and uninformative. The two compound each other's worst tendencies: augmentation makes more hard samples, focal loss forces the model to obsess over them
 
 ### 3. why added augmentation ?
 - the confusion matrix showed a consistent behavior of error throughout the experiments - the error were mostly in _**adjacent classes**_
@@ -51,4 +51,5 @@
 - we use entropy and margin to surface that
 
 
-### 6. 
+### 6. Why used calibration ?
+- a generally good practice in classification problem _and_ also the task demands it even more, a DR system that is not calibrated is dangerous 

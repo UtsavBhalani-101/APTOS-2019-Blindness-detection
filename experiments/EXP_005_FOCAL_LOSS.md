@@ -30,4 +30,3 @@
 
 
 > NOTE: before this I tried focal loss with weights defined which is essentially double impact and that was not recorded but the result didn't had any significant changes and it's also not correct to double count 
-
